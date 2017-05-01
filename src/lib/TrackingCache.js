@@ -24,6 +24,12 @@ export default class TrackingCache {
     }
   }
 
+  /**
+   * Persists the Impostr library by saving it to disk at the path specified when first calling
+   * the library. If no path was originally specified, the library is saved to impostr.json in the
+   * current directory.
+   * @return {String} The file path to the saved Impostr JSON library.
+   */
   persist() {
     fs.writeFile(this.path,
       // Only prettify JSON with indents if the setting is enabled
@@ -33,8 +39,15 @@ export default class TrackingCache {
         if (err) throw err;
       },
     );
+    return this.path;
   }
 
+  /**
+   * Checks the tracking library for a specific file path.
+   * @param  {String}  testPath A valid file path that will be tested against the library.
+   * @return {Boolean}          Returns true if the file path is already being tracked, false if
+   * not.
+   */
   isTrackingPath(testPath) {
     // Force boolean coercion to avoid conditional gotchas
     return !!Object.keys(this.library).find(fileKey =>
@@ -53,10 +66,18 @@ export default class TrackingCache {
     });
   }
 
+  /**
+   * Removes a file path from the tracking library.
+   * @param  {String} pathToRemove A valid file path that's currently tracked.
+   * @return {String|Boolean}      Returns the file path if successfully removed, otherwise returns
+   * false.
+   */
   removeFile(pathToRemove) {
     if (this.library[pathToRemove]) {
       delete this.library[pathToRemove];
+      return pathToRemove;
     }
+    return false;
   }
 
   /**
