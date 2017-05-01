@@ -59,12 +59,20 @@ export default class TrackingCache {
     }
   }
 
+  /**
+   * [addFile description]
+   * @param {[type]} file [description]
+   */
   addFile(file) {
     if (!this.isTrackingPath(file.path)) {
       this.library[file.path] = file.hash;
     }
   }
 
+  /**
+   * Removes any entries in the library that point to dead files.
+   * @return {[type]} [description] <-- Coming soon
+   */
   pruneLibrary() {
     Object.keys(this.library).forEach((filePathKey) => {
       if (!fs.existsSync(filePathKey)) {
@@ -73,6 +81,12 @@ export default class TrackingCache {
     });
   }
 
+  /**
+   * Update hashes of tracked files and return an array of file paths for files that have changed
+   * since last persist. Note that this calls pruneLibrary() which deletes dead file links.
+   * @return {Array} A collection of file path strings for the files that have been changed since
+   * the last time the library was saved (persisted).
+   */
   updateLibrary() {
     // First prune the library so we only compare existing files
     this.pruneLibrary();
