@@ -1,6 +1,7 @@
 import fs from 'fs';
 import glob from 'glob';
 import path from 'path';
+import revHash from 'rev-hash';
 
 import TrackedFile from './TrackedFile';
 
@@ -58,6 +59,12 @@ export default class TrackingCache {
     }
   }
 
+  addFile(file) {
+    if (!this.isTrackingPath(file.path)) {
+      this.library[file.path] = file.hash;
+    }
+  }
+
   pruneLibrary() {
     Object.keys(this.library).forEach((filePathKey) => {
       if (!fs.existsSync(filePathKey)) {
@@ -66,10 +73,26 @@ export default class TrackingCache {
     });
   }
 
-  addFile(file) {
-    if (!this.isTrackingPath(file.path)) {
-      this.library[file.path] = file.hash;
-    }
+  updateLibrary() {
+    // First prune the library so we only compare existing files
+    this.pruneLibrary();
+
+    // Generate an array containing paths to updated files
+    const updatedPaths = Object.keys(this.library).filter((filePath) => {
+      // Compare the saved hash to the hash of a new file
+      const currentHash = revHash(fs.readFileSync(filePath));
+      const savedHash = this.library[filePath];
+      if (currentHash !== savedHash) {
+        // If the file has changed, update the saved hash AND add this path to the list of changed
+        // files
+        this.library[filePath] = currentHash;
+        return true;
+      }
+      // Otherwise, don't do anything except continue the loop
+      return false;
+    });
+
+    return updatedPaths;
   }
 
 }

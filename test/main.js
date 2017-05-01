@@ -2,6 +2,6 @@ const { impostr } = require('../build/impostr');
 
 const cache = impostr();
 
-cache.pruneLibrary();
+console.log(cache.updateLibrary());
 
 cache.persist();
