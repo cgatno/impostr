@@ -60,13 +60,18 @@ export default class TrackingCache {
   }
 
   /**
-   * [addFile description]
-   * @param {[type]} file [description]
+   * Adds a new file to the tracking library.
+   * @param {Object} file A TrackedFile object containing information about the file to add to the
+   * library.
+   * @return {String|Boolean} Returns a string representation of the newly added key/value pair if
+   * successful, otherwise returns false.
    */
   addFile(file) {
     if (!this.isTrackingPath(file.path)) {
       this.library[file.path] = file.hash;
+      return `${file.path}:${this.library[file.path]}`;
     }
+    return false;
   }
 
   /**
