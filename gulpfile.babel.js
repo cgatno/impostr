@@ -23,3 +23,7 @@ gulp.task('lint', () =>
       .pipe(eslint.format())
       .pipe(eslint.failOnError()),
 );
+
+gulp.task('watch', ['build'], () =>
+  gulp.watch(SOURCE_JS_GLOB, ['build']),
+);
