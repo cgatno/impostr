@@ -76,14 +76,17 @@ export default class TrackingCache {
 
   /**
    * Removes any entries in the library that point to dead files.
-   * @return {[type]} [description] <-- Coming soon
+   * @return {Array} A collection of file path strings that were deleted from the library.
    */
   pruneLibrary() {
+    const deletedPaths = [];
     Object.keys(this.library).forEach((filePathKey) => {
       if (!fs.existsSync(filePathKey)) {
         delete this.library[filePathKey];
+        deletedPaths.push(filePathKey);
       }
     });
+    return deletedPaths;
   }
 
   /**
