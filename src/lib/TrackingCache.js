@@ -19,12 +19,13 @@ export default class TrackingCache {
     try {
       this.library = JSON.parse(fs.readFileSync(this.path, 'utf8'));
     } catch (readErr) {
-      this.library = [];
+      this.library = { };
     }
   }
 
   persist() {
     fs.writeFile(this.path,
+      // Only prettify JSON with indents if the setting is enabled
       JSON.stringify(this.library, null, (this.prettifyJson ? 2 : 0)),
       'utf8',
       (err) => {
@@ -33,29 +34,42 @@ export default class TrackingCache {
     );
   }
 
-  containsPath(testPath) {
-    return !!this.library.find(file =>
-      file.path === TrackedFile.formatAnyPath(testPath),
+  isTrackingPath(testPath) {
+    // Force boolean coercion to avoid conditional gotchas
+    return !!Object.keys(this.library).find(fileKey =>
+      fileKey === TrackedFile.formatAnyPath(testPath), // always format paths to tracked format
     );
   }
 
-  trackPaths(globPattern, done) {
+  trackFiles(globPattern, done) {
     glob(globPattern, (err, files) => {
       if (err) throw err;
 
       files.forEach((filePath) => {
-        if (!this.containsPath(filePath)) {
-          this.library.push(new TrackedFile(filePath));
-        }
+        this.addFile(new TrackedFile(filePath));
       });
       done(this.library);
     });
   }
 
-  removePath(pathToRemove) {
-    this.library = this.library.filter(file =>
-      file.path !== TrackedFile.formatAnyPath(pathToRemove),
-    );
+  removeFile(pathToRemove) {
+    if (this.library[pathToRemove]) {
+      delete this.library[pathToRemove];
+    }
+  }
+
+  pruneLibrary() {
+    Object.keys(this.library).forEach((filePathKey) => {
+      if (!fs.existsSync(filePathKey)) {
+        delete this.library[filePathKey];
+      }
+    });
+  }
+
+  addFile(file) {
+    if (!this.isTrackingPath(file.path)) {
+      this.library[file.path] = file.hash;
+    }
   }
 
 }
