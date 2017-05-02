@@ -1,9 +1,8 @@
 {
   "name": "impostr",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Impostr helps you keep track of who's who and what's what. Simple caching tool for checking for file changes over time.",
   "main": "build/impostr.js",
-  "files": "build/lib/",
   "repository": "https://github.com/cgatno/impostr",
   "bugs": {
     "url": "https://github.com/cgatno/impostr/issues",
@@ -19,6 +18,7 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-eslint": "^3.0.1",
+    "gulp-rollup": "^2.11.0",
     "gulp-sourcemaps": "^2.6.0"
   },
   "scripts": {

@@ -1,6 +1,7 @@
 import babel from 'gulp-babel';
 import eslint from 'gulp-eslint';
 import gulp from 'gulp';
+import rollup from 'gulp-rollup';
 import sourcemaps from 'gulp-sourcemaps';
 
 const SOURCE_ROOT_DIR = 'src/';
@@ -10,6 +11,10 @@ const BUILD_ROOT_DIR = 'build/';
 gulp.task('build', ['lint'], () =>
   gulp.src(SOURCE_JS_GLOB)
       .pipe(sourcemaps.init())
+      .pipe(rollup({
+        entry: 'src/impostr.js',
+        format: 'cjs',
+      }))
       .pipe(babel({
         presets: ['es2015-node'],
       }))
