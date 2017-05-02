@@ -1,4 +1,4 @@
-const { impostr } = require('../build/impostr');
+const impostr = require('../build/impostr');
 
 const cache = impostr();
 
