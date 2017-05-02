@@ -55,6 +55,14 @@ export default class TrackingCache {
     );
   }
 
+  /**
+   * Begins tracking any files that match the provided glob pattern and calls the 'done' function
+   * when complete. If there are files matching the glob pattern that are already being tracked,
+   * they won't be added to the library.
+   * @param  {String}   globPattern A shell-like file search pattern that matches files you want to
+   * track. See https://github.com/isaacs/node-glob for more.
+   * @param  {Function} done        A function to be called when all newly added files are tracked.
+   */
   trackFiles(globPattern, done) {
     glob(globPattern, (err, files) => {
       if (err) throw err;
