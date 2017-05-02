@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import revHash from 'rev-hash';
 
 /** The path and current hash of a file to be tracked by Impostr. */
 export default class TrackedFile {
@@ -13,7 +12,7 @@ export default class TrackedFile {
   constructor(filePath) {
     try {
       this.path = fs.realpathSync(path.normalize(filePath));
-      this.hash = revHash(fs.readFileSync(this.path));
+      this.hash = '';
     } catch (readErr) {
       throw readErr;
     }
