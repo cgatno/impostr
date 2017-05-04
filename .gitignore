@@ -11,3 +11,7 @@ Thumbs.db
 # or `npm run build`
 # or `gulp build`
 build/
+
+# The test Impostr library
+# Use `node test/main.js` to run the test and generate the library
+test/impostr.json
