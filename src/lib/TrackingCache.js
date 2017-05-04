@@ -73,7 +73,7 @@ export default class TrackingCache {
    */
   trackFiles(globPattern, done) {
     if (this.debug) console.log(`Tracking files matching pattern ${globPattern}...`);
-    glob(globPattern, { nodir: true }, (err, files) => {
+    glob(globPattern, { nodir: true, symlinks: true }, (err, files) => {
       if (err) {
         if (this.debug) console.log('IMPOSTR ERROR: ', JSON.stringify(err));
         throw err;
