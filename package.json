@@ -1,6 +1,6 @@
 {
   "name": "impostr",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Impostr helps you keep track of who's who and what's what. Simple caching tool for checking for file changes over time.",
   "main": "build/impostr.js",
   "repository": "https://github.com/cgatno/impostr",
