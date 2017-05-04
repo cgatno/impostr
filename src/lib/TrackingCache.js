@@ -60,9 +60,7 @@ export default class TrackingCache {
    */
   isTrackingPath(testPath) {
     // Force boolean coercion to avoid conditional gotchas
-    return !!Object.keys(this.library).find(fileKey =>
-      fileKey === TrackedFile.formatAnyPath(testPath), // always format paths to tracked format
-    );
+    return !!this.library[TrackedFile.formatAnyPath(testPath)];
   }
 
   /**
@@ -74,8 +72,8 @@ export default class TrackingCache {
    * @param  {Function} done        A function to be called when all newly added files are tracked.
    */
   trackFiles(globPattern, done) {
-    if (this.debug) console.log(`Tracking files matching pattern ${globPattern}`);
-    glob(globPattern, (err, files) => {
+    if (this.debug) console.log(`Tracking files matching pattern ${globPattern}...`);
+    glob(globPattern, { nodir: true }, (err, files) => {
       if (err) {
         if (this.debug) console.log('IMPOSTR ERROR: ', JSON.stringify(err));
         throw err;
@@ -139,8 +137,23 @@ export default class TrackingCache {
    */
   pruneLibrary() {
     const deletedPaths = [];
+    if (this.debug) console.log('Pruning library...');
+
+    // Only show pruning progress if debugging is enabled
+    let numFiles;
+    let currentFile;
+    if (this.debug) {
+      numFiles = Object.keys(this.library).length;
+      currentFile = 0;
+    }
+
     Object.keys(this.library).forEach((filePathKey) => {
+      if (this.debug) {
+        currentFile += 1;
+        console.log(`[${currentFile}/${numFiles}] Checking if ${filePathKey} exists...`);
+      }
       if (!fs.existsSync(filePathKey)) {
+        console.log(`${filePathKey} doesn't exist. Deleting...`);
         delete this.library[filePathKey];
         deletedPaths.push(filePathKey);
       }
@@ -158,14 +171,29 @@ export default class TrackingCache {
     // First prune the library so we only compare existing files
     this.pruneLibrary();
 
+    if (this.debug) console.log('Updating library...');
+
+    // Only show updating progress if debugging is enabled
+    let numFiles;
+    let currentFile;
+    if (this.debug) {
+      numFiles = Object.keys(this.library).length;
+      currentFile = 0;
+    }
+
     // Generate an array containing paths to updated files
     const updatedPaths = Object.keys(this.library).filter((filePath) => {
+      if (this.debug) {
+        currentFile += 1;
+        console.log(`[${currentFile}/${numFiles}] Checking if ${filePath} has changed...`);
+      }
       // Compare the saved hash to the hash of a new file
       const currentHash = revHash(fs.readFileSync(filePath));
       const savedHash = this.library[filePath];
       if (currentHash !== savedHash) {
         // If the file has changed, update the saved hash AND add this path to the list of changed
         // files
+        if (this.debug) console.log(`${filePath} has changed! Updating hash...`);
         this.library[filePath] = currentHash;
         return true;
       }

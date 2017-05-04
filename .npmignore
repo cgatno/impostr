@@ -5,3 +5,4 @@ src/
 .eslintrc
 .gitignore
 gulpfile.babel.js
+test/impostr.json
