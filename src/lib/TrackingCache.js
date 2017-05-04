@@ -6,21 +6,27 @@ import revHash from 'rev-hash';
 import TrackedFile from './TrackedFile';
 
 export default class TrackingCache {
-  constructor(cacheLibraryPath) {
+  constructor(cacheLibraryPath, debugInDevelopment) {
     // Default config
     this.prettifyJson = true;
+    // Keep track of whether or not this instance should log debug information
+    // ONLY log debugging when the user wants it (by default) and the NODE_ENV is set to development
+    this.debug = (debugInDevelopment && (process.env.NODE_ENV === 'development'));
     // Whether we're loading or creating new, cachePath will be the permanent path for this instance
     try {
       this.path = path.normalize(cacheLibraryPath);
     } catch (pathErr) {
+      if (this.debug) console.log('IMPOSTR ERROR: ', JSON.stringify(pathErr));
       throw pathErr;
     }
 
     // Try to load an existing cache library, or create a new one if we can't
     try {
       this.library = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+      if (this.debug) console.log(`Loaded Impostr library from ${this.path}.`);
     } catch (readErr) {
       this.library = { };
+      if (this.debug) console.log(`Created new Impostr library at ${this.path}.`);
     }
   }
 
@@ -31,12 +37,16 @@ export default class TrackingCache {
    * @return {String} The file path to the saved Impostr JSON library.
    */
   persist() {
+    if (this.debug) console.log(`Writing cache to ${this.path}...`);
     fs.writeFile(this.path,
       // Only prettify JSON with indents if the setting is enabled
       JSON.stringify(this.library, null, (this.prettifyJson ? 2 : 0)),
       'utf8',
       (err) => {
-        if (err) throw err;
+        if (err) {
+          if (this.debug) console.error('IMPOSTR ERROR: ', JSON.stringify(err));
+          throw err;
+        }
       },
     );
     return this.path;
@@ -64,11 +74,31 @@ export default class TrackingCache {
    * @param  {Function} done        A function to be called when all newly added files are tracked.
    */
   trackFiles(globPattern, done) {
+    if (this.debug) console.log(`Tracking files matching pattern ${globPattern}`);
     glob(globPattern, (err, files) => {
-      if (err) throw err;
+      if (err) {
+        if (this.debug) console.log('IMPOSTR ERROR: ', JSON.stringify(err));
+        throw err;
+      }
+
+      // Only show tracking progress if debugging is enabled
+      let numFiles;
+      let currentFile;
+      if (this.debug) {
+        numFiles = files.length;
+        currentFile = 0;
+      }
 
       files.forEach((filePath) => {
-        this.addFile(new TrackedFile(filePath));
+        const fileAdded = this.addFile(new TrackedFile(filePath));
+        if (this.debug) {
+          currentFile += 1;
+          if (fileAdded) {
+            console.log(`[${currentFile}/${numFiles}] Began tracking ${filePath}...`);
+          } else {
+            console.log(`[${currentFile}/${numFiles}] Already tracking ${filePath}.`);
+          }
+        }
       });
       done(this.library);
     });
