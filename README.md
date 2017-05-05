@@ -2,7 +2,7 @@
 
 Simple and fast caching tool for tracking file changes on [node](https://nodejs.org/).
 
-[![npm version](https://badge.fury.io/js/impostr@2x.png)](https://badge.fury.io/js/impostr)
+[![npm version](https://badge.fury.io/js/impostr.svg)](https://badge.fury.io/js/impostr)
 
 ```javascript
 var impostr = require('impostr');
@@ -31,7 +31,7 @@ Here's what you'll need installed on your development machine:
 - [Yarn](https://yarnpkg.com/en/) (Optional but recommended - see [below](#installation).)
 - [Git](https://git-scm.com/)
 
-### Installation
+### Initializing Environment
 
 The first step in installing the API for local testing is cloning the code from the Git repository:
 
@@ -56,15 +56,15 @@ Our Gulp pipeline is linked with a NPM script, so all you need to do to build th
 
 You can also run Gulp build tasks individually if you'd like. The primary Gulp build task can be started with `gulp build`. A more detailed listing of Gulp build tasks will be in this section soon!
 
-## Source Code Guidelines
+### Source Code Guidelines
 
 In general, this project follows a traditional Node.js project structure and uses some well-established code style and source control guidelines. Be sure any code you submit for inclusion in the project conforms to these guidelines!
 
-### File structure
+#### File structure
 
 All source code is written in ES2015 JavaScript and goes in `src/`. Our build pipeline transpiles this code to ES5 specific to your current Node version and places it in `build/`.
 
-### Code Style
+#### Code Style
 
 All JavaScript code is checked for syntax and API standards according to the [airbnb JavaScript style guide](https://github.com/airbnb/javascript). Specifically, we use [ESLint](http://eslint.org/) and the [eslint-config-airbnb-base](https://www.npmjs.com/package/eslint-config-airbnb-base) package for code linting.
 
@@ -82,9 +82,13 @@ We're definitely open to making modifications to our style guidelines. In fact, 
 
 The best way to get the rules changed is by simply breaking them! Submit a pull request with code that doesn't pass linting via `yarn run lint` and explain why you think it should. If we can come to a consensus, we'll modify our rules accordingly.
 
-### Source Control
+#### Source Control
 
 We use Git for source control and the [Gitflow methodology](http://nvie.com/posts/a-successful-git-branching-model/) for managing branching, pull requests, and releases.
+
+## Tests
+
+Right now, there's just a rudimentary test set up in `/test`. Official and _useful_ unit testing **coming soon**!
 
 ## Roadmap
 
@@ -92,7 +96,8 @@ Upcoming changes:
 
 _(In order of priority)_
 
-- Coming soon
+- Unit testing
+- Support for more file metadata - date changed, changed by, etc.
 
 ## License
 
@@ -102,7 +107,7 @@ This project is licensed under the [MIT license](LICENSE).
 
 Huge thanks to this team of direct contributors for writing the code!
 
-- Your name could be here! :)
+- [Your name could be here!](#contributing) :)
 - [Christian Gaetano](http://christiangaetano.com)
 
 ## Built With
@@ -116,4 +121,5 @@ _(In alphabetical order to avoid favoritism)_ 😉
 - [ESLint](http://eslint.org/)
 - [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/en/)
+- [rev-hash](https://www.npmjs.com/package/rev-hash)
 - [Yarn](https://yarnpkg.com/en/)
