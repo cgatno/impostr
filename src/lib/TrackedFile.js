@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from 'path';
 
 /** The path and current hash of a file to be tracked by Impostr. */
@@ -11,7 +10,7 @@ export default class TrackedFile {
    */
   constructor(filePath) {
     try {
-      this.path = fs.realpathSync(path.normalize(filePath));
+      this.path = TrackedFile.formatAnyPath(filePath);
       this.hash = '';
     } catch (readErr) {
       throw readErr;
@@ -24,6 +23,6 @@ export default class TrackedFile {
    * @return {string}           A file path in the format used by the Impostr library.
    */
   static formatAnyPath(inputPath) {
-    return fs.realpathSync(path.normalize(inputPath));
+    return path.normalize(inputPath);
   }
 }
